@@ -1,0 +1,25 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: bxc-fantasy/gen
+plugins:
+  # Go generation
+  - plugin: buf.build/protocolbuffers/go
+    out: gen
+    opt:
+      - paths=source_relative
+  - plugin: buf.build/connectrpc/go
+    out: gen
+    opt:
+      - paths=source_relative
+
+  # Web generation
+  - plugin: buf.build/bufbuild/es
+    out: apps/web/src/gen
+    opt:
+      - target=ts
+  - plugin: buf.build/connectrpc/es
+    out: apps/web/src/gen
+    opt:
+      - target=ts

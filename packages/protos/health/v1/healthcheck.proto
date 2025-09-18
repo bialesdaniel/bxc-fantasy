@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package health.v1;
+
+message HealthRequest { }
+
+message HealthResponse {
+   int32 uptime_seconds = 1;
+}
+
+service HealthService {
+  rpc Health(HealthRequest) returns (HealthResponse) {}
+}
