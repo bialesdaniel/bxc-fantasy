@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package health.v1;
+
+message CheckRequest { }
+
+message CheckResponse {
+   int32 uptime_seconds = 1;
+}
+
+service Health {
+  rpc Check(CheckRequest) returns (CheckResponse) {}
+}

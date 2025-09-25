@@ -2,24 +2,18 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: bxc-fantasy/gen
+    default: bxc-fantasy-app/server/gen/protos/go
 plugins:
-  # Go generation
+  # Go generation for the server app using connect-go
   - plugin: buf.build/protocolbuffers/go
-    out: gen
+    out: apps/server/gen/protos/go
     opt:
       - paths=source_relative
   - plugin: buf.build/connectrpc/go
-    out: gen
+    out: apps/server/gen/protos/go
     opt:
       - paths=source_relative
 
-  # Web generation
-  - plugin: buf.build/bufbuild/es
-    out: apps/web/src/gen
-    opt:
-      - target=ts
+  # Web generation (TypeScript + Connect-Web)
   - plugin: buf.build/connectrpc/es
     out: apps/web/src/gen
-    opt:
-      - target=ts

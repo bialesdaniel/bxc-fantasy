@@ -13,6 +13,7 @@
 # Generated code
 /gen
 /apps/web/src/gen
+/apps/server/gen
 
 # Environment variables
 .env
