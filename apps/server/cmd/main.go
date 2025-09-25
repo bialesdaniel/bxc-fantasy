@@ -4,6 +4,7 @@ import (
 	"bxc-fantasy-app/server/internal/healthservice"
 	"log"
 	"net/http"
+	"os"
 
 	chi "github.com/go-chi/chi/v5"
 	"golang.org/x/net/http2"
@@ -11,12 +12,17 @@ import (
 )
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	addr := ":" + port
+
 	log.Println("Starting server...")
 	router := chi.NewRouter()
 
 	healthservice.RegisterHandlers(router)
 
-	addr := ":8080"
 	log.Printf("Server listening on %s", addr)
 
 	err := http.ListenAndServe(addr, h2c.NewHandler(router, &http2.Server{}))
