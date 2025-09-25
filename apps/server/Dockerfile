@@ -6,6 +6,8 @@ FROM golang:1.24.0-alpine3.19 AS builder
 
 # Install build tools. git is required for 'go mod download'.
 RUN apk add --no-cache git
+# Install buf CLI for code generation
+RUN go install github.com/bufbuild/buf/cmd/buf@latest
 
 # Set the working directory inside the container.
 WORKDIR /app
@@ -13,13 +15,18 @@ WORKDIR /app
 # Copy go.mod and go.sum to leverage Docker's layer caching.
 # This step will only be re-run if these files change.
 COPY apps/server/go.mod apps/server/go.sum ./
-
 # Download dependencies.
 RUN go mod download
 
-# Copy only the server application source code. This is more efficient
-# than `COPY . .` in a monorepo, as it avoids copying unrelated code.
-COPY ./apps/server ./apps/server
+# Copy the protobuf files.
+COPY packages/protos/ /app/protos/
+COPY buf.gen.yaml /app/buf.gen.yaml
+
+# Generate protobuf files.
+RUN buf generate protos
+
+# Copy the server application source code.
+COPY ./apps/server/internal/ ./apps/server/cmd/ ./apps/server/
 
 # Build the Go application into a static binary.
 # CGO_ENABLED=0 is crucial for creating a static binary that can run in a minimal image like Alpine.
