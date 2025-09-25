@@ -35,7 +35,7 @@ COPY ./apps/server/cmd/ /app/cmd/
 
 # Build the Go application into a static binary.
 # CGO_ENABLED=0 is crucial for creating a static binary that can run in a minimal image like Alpine.
-RUN CGO_ENABLED=0 go build -o /server ./apps/server/cmd/main.go
+RUN CGO_ENABLED=0 go build -o /server /app/cmd/main.go
 
 # ---- Final Stage ----
 # Use a distroless static image for a minimal and secure final container.
