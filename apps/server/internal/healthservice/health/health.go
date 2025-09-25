@@ -1,6 +1,7 @@
 package health
 
 import (
+	"bxc-fantasy-app/server/gen/protos/go/health/v1/healthv1connect"
 	healthv1 "bxc-fantasy-app/server/gen/protos/go/health/v1"
 	"context"
 	"log"
@@ -10,11 +11,13 @@ import (
 )
 
 type Server struct {
+	healthv1connect.UnimplementedHealthHandler
 	startTime time.Time
 }
 
-func NewService() *Server {
+func NewServer() *Server {
 	return &Server{
+		UnimplementedHealthHandler: healthv1connect.UnimplementedHealthHandler{},
 		startTime: time.Now(),
 	}
 }

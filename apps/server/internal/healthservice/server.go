@@ -9,7 +9,7 @@ import (
 )
 
 func RegisterHandlers(router *chi.Mux) {
-	healthService := health.NewService()
+	healthService := health.NewServer()
 	router.Handle("/health/v1/check", connect.NewUnaryHandler(
 		healthv1connect.HealthCheckProcedure,
 		healthService.Check,
