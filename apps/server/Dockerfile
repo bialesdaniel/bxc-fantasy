@@ -1,22 +1,8 @@
-# ---- Build Stage ----
-# Use a specific version of the Go Alpine image as a builder.
-# This aligns with the `go.mod` version and improves build reproducibility
-# by pinning to a more specific tag instead of a floating one.
-FROM golang:1.24.0-alpine3.19 AS builder
+# ---- Protobuf Generation Stage ----
+FROM golang:1.24.0-alpine3.19 AS protobuf-gen
 
-# Install build tools. git is required for 'go mod download'.
-RUN apk add --no-cache git
 # Install buf CLI for code generation
 RUN go install github.com/bufbuild/buf/cmd/buf@latest
-
-# Set the working directory inside the container.
-WORKDIR /app
-
-# Copy go.mod and go.sum to leverage Docker's layer caching.
-# This step will only be re-run if these files change.
-COPY apps/server/go.mod apps/server/go.sum ./
-# Download dependencies.
-RUN go mod download
 
 # Copy the protobuf files.
 COPY packages/protos/ /app/protos/
@@ -25,8 +11,27 @@ COPY buf.gen.yaml /app/buf.gen.yaml
 # Generate protobuf files.
 RUN buf generate protos
 
+# ---- Builder Stage ----
+FROM golang:1.24.0-alpine3.19 AS builder
+
+# Install build tools. git is required for 'go mod download'.
+RUN apk add --no-cache git
+
+# Set the working directory inside the container.
+WORKDIR /app
+
+COPY apps/server/go.mod apps/server/go.sum /app/
+# Download dependencies.
+RUN go mod download
+
+WORKDIR /app
+
+# Copy generated files from the protobuf-gen stage.
+COPY --from=protobuf-gen /app/apps/server/gen /app/gen 
+
 # Copy the server application source code.
-COPY ./apps/server/internal/ ./apps/server/cmd/ ./apps/server/
+COPY ./apps/server/internal/ /app/internal/
+COPY ./apps/server/cmd/ /app/cmd/
 
 # Build the Go application into a static binary.
 # CGO_ENABLED=0 is crucial for creating a static binary that can run in a minimal image like Alpine.
