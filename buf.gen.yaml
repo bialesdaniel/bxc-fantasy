@@ -15,5 +15,7 @@ plugins:
       - paths=source_relative
 
   # Web generation (TypeScript + Connect-Web)
+  - plugin: buf.build/bufbuild/es
+    out: apps/web/src/gen
   - plugin: buf.build/connectrpc/es
     out: apps/web/src/gen

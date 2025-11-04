@@ -1,12 +1,10 @@
 package healthservice
 
 import (
+	"net/http"
 	"time"
 
 	"bxc-fantasy-app/server/gen/protos/go/health/v1/healthv1connect"
-
-	"connectrpc.com/connect"
-	chi "github.com/go-chi/chi/v5"
 )
 
 // Server implements the health.v1.Health service.
@@ -22,10 +20,8 @@ func New() *Server {
 	}
 }
 
-func RegisterHandlers(router *chi.Mux) {
+func RegisterHandlers(router *http.ServeMux) {
 	healthService := New()
-	router.Handle("/health/v1/check", connect.NewUnaryHandler(
-		healthv1connect.HealthCheckProcedure,
-		healthService.Check,
-	))
+	path, handler := healthv1connect.NewHealthHandler(healthService)
+	router.Handle(path, handler)
 }
