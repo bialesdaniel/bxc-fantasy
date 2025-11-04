@@ -1,10 +1,11 @@
 package main
 
 import (
-	"bxc-fantasy-app/server/internal/healthservice"
 	"log"
 	"net/http"
 	"os"
+
+	"bxc-fantasy-app/server/internal/healthservice"
 
 	chi "github.com/go-chi/chi/v5"
 	"golang.org/x/net/http2"
