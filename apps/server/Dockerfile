@@ -1,5 +1,5 @@
 # ---- Protobuf Generation Stage ----
-FROM golang:1.24.0-alpine3.19 AS protobuf-gen
+FROM golang:1.24.9-alpine AS protobuf-gen
 
 # Set the working directory inside the container.
 WORKDIR /app
@@ -15,7 +15,7 @@ COPY buf.gen.yaml .
 RUN buf generate protos
 
 # ---- Builder Stage ----
-FROM golang:1.24.0-alpine3.19 AS builder
+FROM golang:1.24.9-alpine AS builder
 
 # Set the working directory inside the container.
 WORKDIR /app
@@ -31,7 +31,7 @@ RUN go mod download
 COPY --from=protobuf-gen /app/apps/server/gen /app/gen
 
 # Copy the server application source code.
-COPY ./apps/server/ /app/
+COPY apps/server/ /app/
 
 # Build the Go application into a static binary.
 # CGO_ENABLED=0 is crucial for creating a static binary that can run in a minimal image like Alpine.
