@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	connectrpc.com/connect v1.18.1
-	github.com/go-chi/chi/v5 v5.2.3
+	github.com/rs/cors v1.11.1
 	golang.org/x/net v0.44.0
 	google.golang.org/protobuf v1.34.2
 )
